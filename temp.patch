@@ -1,0 +1,334 @@
+diff --git a/avx/math.h b/avx/math.h
+index bd07961..b94cc25 100644
+--- a/avx/math.h
++++ b/avx/math.h
+@@ -79,6 +79,28 @@ Vc_ALWAYS_INLINE Vc_PURE AVX2::Vector<T> round(const AVX2::Vector<T> &x)
+     return AVX::VectorHelper<T>::round(x.data());
+ }
+ 
++#ifdef Vc_IMPL_AVX2
++Vc_ALWAYS_INLINE Vc_PURE AVX2::int_v iround(const AVX2::float_v &x)
++{
++    return AVX::VectorHelper<float>::iround(x.data());
++}
++#else
++Vc_ALWAYS_INLINE Vc_PURE SimdArray<int, AVX2::float_v::size()> iround(const AVX2::float_v &x)
++{
++    __m256i value = _mm256_cvtps_epi32(x.data());
++
++    return SimdArray<int, AVX2::float_v::size()>(AVX::int_v(AVX::lo128(value)), AVX::int_v(AVX::hi128(value)));
++
++}
++#endif
++
++Vc_ALWAYS_INLINE Vc_PURE SSE::int_v iround(const AVX2::double_v &x)
++{
++    return AVX::VectorHelper<double>::iround(x.data());
++}
++
++
++
+ // abs {{{1
+ Vc_INTRINSIC Vc_CONST AVX2::double_v abs(AVX2::double_v x)
+ {
+diff --git a/avx/vectorhelper.h b/avx/vectorhelper.h
+index 575cdfd..0613d6f 100644
+--- a/avx/vectorhelper.h
++++ b/avx/vectorhelper.h
+@@ -186,6 +186,10 @@ namespace AVX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VTArg a) {
+                 return _mm256_round_pd(a, _MM_FROUND_NINT);
+             }
++
++            static Vc_ALWAYS_INLINE Vc_CONST __m128i iround(VTArg a) {
++                return _mm256_cvtpd_epi32(a);
++            }
+         };
+ 
+         template<> struct VectorHelper<float> {
+@@ -265,6 +269,10 @@ namespace AVX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VTArg a) {
+                 return _mm256_round_ps(a, _MM_FROUND_NINT);
+             }
++            static Vc_ALWAYS_INLINE Vc_CONST __m256i iround(VTArg a) {
++                return _mm256_cvtps_epi32(a);
++            }
++
+         };
+ 
+ #undef Vc_OP1
+diff --git a/common/simdarray.h b/common/simdarray.h
+index c50e80f..20157a5 100644
+--- a/common/simdarray.h
++++ b/common/simdarray.h
+@@ -1551,6 +1551,7 @@ Vc_FORWARD_UNARY_OPERATOR(log10);
+ Vc_FORWARD_UNARY_OPERATOR(log2);
+ Vc_FORWARD_UNARY_OPERATOR(reciprocal);
+ Vc_FORWARD_UNARY_OPERATOR(round);
++//Vc_FORWARD_UNARY_OPERATOR(iround);
+ Vc_FORWARD_UNARY_OPERATOR(rsqrt);
+ Vc_FORWARD_UNARY_OPERATOR(sin);
+ /// Determines sine and cosine concurrently and component-wise on \p x.
+@@ -1559,6 +1560,16 @@ void sincos(const SimdArray<T, N> &x, SimdArray<T, N> *sin, SimdArray<T, N> *cos
+ {
+     SimdArray<T, N>::callOperation(Common::Operations::Forward_sincos(), x, sin, cos);
+ }
++template <typename T, std::size_t N>
++SimdArray<int, N> iround(const SimdArray<T, N> &x)
++{
++    return SimdArray<int, N>::fromOperation(Common::Operations::Forward_iround(), x);
++
++
++    SimdArray<int, N> r(x);
++    return r;
++   // return x;
++}
+ Vc_FORWARD_UNARY_OPERATOR(sqrt);
+ Vc_FORWARD_UNARY_OPERATOR(trunc);
+ Vc_FORWARD_BINARY_OPERATOR(min);
+diff --git a/common/simdarrayhelper.h b/common/simdarrayhelper.h
+index 1c332c9..65a22ca 100644
+--- a/common/simdarrayhelper.h
++++ b/common/simdarrayhelper.h
+@@ -103,6 +103,7 @@ Vc_DEFINE_OPERATION_FORWARD(log10);
+ Vc_DEFINE_OPERATION_FORWARD(log2);
+ Vc_DEFINE_OPERATION_FORWARD(reciprocal);
+ Vc_DEFINE_OPERATION_FORWARD(round);
++Vc_DEFINE_OPERATION_FORWARD(iround);
+ Vc_DEFINE_OPERATION_FORWARD(rsqrt);
+ Vc_DEFINE_OPERATION_FORWARD(sin);
+ Vc_DEFINE_OPERATION_FORWARD(sincos);
+diff --git a/include/Vc/vector.h b/include/Vc/vector.h
+index 444d18f..7553021 100644
+--- a/include/Vc/vector.h
++++ b/include/Vc/vector.h
+@@ -276,6 +276,7 @@ namespace std
+   using Vc::log10;
+   using Vc::log2;
+   using Vc::round;
++  using Vc::iround;
+   using Vc::sin;
+   using Vc::sqrt;
+ 
+diff --git a/scalar/math.h b/scalar/math.h
+index 6673bff..cd954fb 100644
+--- a/scalar/math.h
++++ b/scalar/math.h
+@@ -181,6 +181,11 @@ template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<T> round(const Scala
+     return x;
+ }
+ 
++template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<int> iround(const Scalar::Vector<T> &x)
++{
++    return Scalar::Vector<int>(std::round(x.data()));
++}
++
+ namespace
+ {
+     template<typename T> bool _realIsEvenHalf(T x) {
+@@ -200,6 +205,16 @@ template<> Vc_ALWAYS_INLINE Scalar::Vector<double> round(const Scalar::Vector<do
+     return Scalar::double_v(std::floor(x.data() + 0.5 ) - (_realIsEvenHalf(x.data()) ? 1.  : 0. ));
+ }
+ 
++template<> Vc_ALWAYS_INLINE Scalar::Vector<int>  iround(const Scalar::Vector<float>  &x)
++{
++    return Scalar::int_v(std::floor(x.data() + 0.5f) - (_realIsEvenHalf(x.data()) ? 1.f : 0.f));
++}
++
++template<> Vc_ALWAYS_INLINE Scalar::Vector<int> iround(const Scalar::Vector<double> &x)
++{
++    return Scalar::int_v(std::floor(x.data() + 0.5 ) - (_realIsEvenHalf(x.data()) ? 1.  : 0. ));
++}
++
+ template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<T> reciprocal(const Scalar::Vector<T> &x)
+ {
+     const typename Vector<T, VectorAbi::Scalar>::EntryType one = 1; return Scalar::Vector<T>(one / x.data());
+diff --git a/sse/vector.h b/sse/vector.h
+index 42a9dd2..b679111 100644
+--- a/sse/vector.h
++++ b/sse/vector.h
+@@ -331,6 +331,7 @@ Vc_ALWAYS_INLINE Vc_PURE Vector<T, VectorAbi::Sse> abs(Vector<T, VectorAbi::Sse>
+   template<typename T> Vc_ALWAYS_INLINE Vc_PURE Vector<T, VectorAbi::Sse> rsqrt(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::rsqrt(x.data()); }
+   template<typename T> Vc_ALWAYS_INLINE Vc_PURE Vector<T, VectorAbi::Sse> reciprocal(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::reciprocal(x.data()); }
+   template<typename T> Vc_ALWAYS_INLINE Vc_PURE Vector<T, VectorAbi::Sse> round(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::round(x.data()); }
++  template<typename T> Vc_ALWAYS_INLINE Vc_PURE SSE::int_v iround(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::iround(x.data()); }
+ 
+   template<typename T> Vc_ALWAYS_INLINE Vc_PURE typename Vector<T, VectorAbi::Sse>::Mask isfinite(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::isFinite(x.data()); }
+   template<typename T> Vc_ALWAYS_INLINE Vc_PURE typename Vector<T, VectorAbi::Sse>::Mask isinf(const Vector<T, VectorAbi::Sse> &x) { return SSE::VectorHelper<T>::isInfinite(x.data()); }
+diff --git a/sse/vectorhelper.h b/sse/vectorhelper.h
+index 8c7718e..217cedc 100644
+--- a/sse/vectorhelper.h
++++ b/sse/vectorhelper.h
+@@ -215,6 +215,10 @@ namespace SSE
+                 return _mm_cvtepi32_pd(_mm_cvtpd_epi32(a));
+ #endif
+             }
++
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) {
++                return _mm_cvtpd_epi32(a);
++            }
+         };
+ 
+         template<> struct VectorHelper<float> {
+@@ -297,6 +301,10 @@ namespace SSE
+                 return _mm_cvtepi32_ps(_mm_cvtps_epi32(a));
+ #endif
+             }
++
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) {
++                return _mm_cvtps_epi32(a);
++            }
+         };
+ 
+         template<> struct VectorHelper<int> {
+@@ -362,6 +370,7 @@ namespace SSE
+             Vc_OP(add) Vc_OP(sub)
+ #undef Vc_SUFFIX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VectorType a) { return a; }
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) { return a; }
+         };
+ 
+         template<> struct VectorHelper<unsigned int> {
+@@ -441,6 +450,7 @@ namespace SSE
+             Vc_OP(add) Vc_OP(sub)
+ #undef Vc_SUFFIX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VectorType a) { return a; }
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) { return a; }
+         };
+ 
+         template<> struct VectorHelper<signed short> {
+@@ -508,6 +518,7 @@ namespace SSE
+             Vc_OP(add) Vc_OP(sub)
+ #undef Vc_SUFFIX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VectorType a) { return a; }
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) { return a; }
+         };
+ 
+         template<> struct VectorHelper<unsigned short> {
+@@ -611,6 +622,7 @@ namespace SSE
+             Vc_OP(add) Vc_OP(sub)
+ #undef Vc_SUFFIX
+             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VectorType a) { return a; }
++            static Vc_ALWAYS_INLINE Vc_CONST _M128I iround(VectorType a) { return a; }
+         };
+ #undef Vc_OP1
+ #undef Vc_OP
+diff --git a/tests/math.cpp b/tests/math.cpp
+index 5baed5b..659892f 100644
+--- a/tests/math.cpp
++++ b/tests/math.cpp
+@@ -45,7 +45,7 @@ using AllTypes = concat<AllVectors, AllSimdArrays>;
+ #ifdef isnan
+ #undef isnan
+ #endif
+-
++/*
+ // abs {{{1
+ TEST_TYPES(V, testAbs, (concat<RealTypes, int_v, short_v, SimdArray<int, 8>,
+                                SimdArray<int, 2>, SimdArray<int, 7>>))
+@@ -235,7 +235,7 @@ TEST_TYPES(V, testRound, (RealTypes)) //{{{1
+         if (i % 8 == 2) {
+             reference[i] -= 1.;
+         }
+-        //std::cout << reference[i] << " ";
++        //std::cout << data[i] << " " << reference[i]  << "//";
+     }
+     //std::cout << std::endl;
+     for (int i = 0; i < Count; ++i) {
+@@ -244,8 +244,88 @@ TEST_TYPES(V, testRound, (RealTypes)) //{{{1
+         //std::cout << a << ref << std::endl;
+         COMPARE(Vc::round(a), ref);
+     }
++}*/
++
++template <typename T, long unsigned int N>
++struct GetRoundedType { };
++
++#ifdef Vc_IMPL_AVX2
++template <long unsigned int N>
++struct GetRoundedType<Vc::float_v, N> {
++    typedef typename Vc::int_v type;
++};
++#else
++template <long unsigned int N>
++struct GetRoundedType<Vc::float_v, N> {
++    typedef typename Vc::SimdArray<int, N> type;
++};
++#endif
++
++#if defined Vc_IMPL_SSE || defined Vc_IMPL_AVX
++template <long unsigned int N>
++struct GetRoundedType<Vc::double_v, N> {
++    typedef typename SSE::int_v type;
++};
++#else
++template <long unsigned int N>
++struct GetRoundedType<Vc::double_v, N> {
++    // TODO: how to return SSE-based vector directly?
++    //       Or simdarray will fall-back to it automatically?
++    typedef typename Vc::SimdArray<int, N> type;
++};
++#endif
++
++template <long unsigned int N>
++struct GetRoundedType<Vc::int_v, N> {
++    typedef typename Vc::int_v type;
++};
++
++template <long unsigned int N>
++struct GetRoundedType<Vc::SimdArray<float, N>, N > {
++    typedef typename Vc::SimdArray<int, N> type;
++};
++
++template <long unsigned int N>
++struct GetRoundedType<Vc::SimdArray<double, N>, N > {
++    typedef typename Vc::SimdArray<int, N> type;
++};
++
++
++TEST_TYPES(V, testIRound, (RealTypes)) //{{{1
++{
++    typedef typename V::EntryType T;
++    typedef typename GetRoundedType<V, V::Size>::type R;
++    typedef typename R::EntryType RT;
++    enum {
++        Count = (16 + V::Size) / V::Size
++    };
++    VectorMemoryHelper<V> mem1(Count);
++    VectorMemoryHelper<R> mem2(Count);
++    T *data = mem1;
++    RT *reference = mem2;
++    for (size_t i = 0; i < Count * V::Size; ++i) {
++        data[i] = i * 0.25 - 2.0;
++        reference[i] = int(std::floor(i * 0.25 - 2.0 + 0.5));
++        if (i % 8 == 2) {
++            reference[i] -= 1;
++        }
++        //std::cout << data[i] << " " << reference[i]  << "//";
++    }
++    //std::cout << std::endl;
++    for (int i = 0; i < Count; ++i) {
++        const V a(&data[i * V::Size]);
++        const R ref(&reference[i * V::Size]);
++        std::cout << a << "  " << ref << std::endl;
++
++        auto newValue = Vc::iround(a);
++
++        COMPARE(newValue, ref);
++
++
++    }
+ }
+ 
++/*
+ TEST_TYPES(V, testExponent, (RealTypes)) //{{{1
+ {
+     typedef typename V::EntryType T;
+@@ -365,6 +445,6 @@ TEST_TYPES(V, testCopysign, (RealTypes))
+     COMPARE(z, V::generate([&](int i) { return std::copysign(x[i], y[i]); }));
+ }
+ 
+-//}}}1
++//}}}1*/
+ 
+ // vim: foldmethod=marker

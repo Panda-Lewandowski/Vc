@@ -1551,6 +1551,7 @@ Vc_FORWARD_UNARY_OPERATOR(log10);
 Vc_FORWARD_UNARY_OPERATOR(log2);
 Vc_FORWARD_UNARY_OPERATOR(reciprocal);
 Vc_FORWARD_UNARY_OPERATOR(round);
+//Vc_FORWARD_UNARY_OPERATOR(iround);
 Vc_FORWARD_UNARY_OPERATOR(rsqrt);
 Vc_FORWARD_UNARY_OPERATOR(sin);
 /// Determines sine and cosine concurrently and component-wise on \p x.
@@ -1558,6 +1559,16 @@ template <typename T, std::size_t N>
 void sincos(const SimdArray<T, N> &x, SimdArray<T, N> *sin, SimdArray<T, N> *cos)
 {
     SimdArray<T, N>::callOperation(Common::Operations::Forward_sincos(), x, sin, cos);
+}
+template <typename T, std::size_t N>
+SimdArray<int, N> iround(const SimdArray<T, N> &x)
+{
+    return SimdArray<int, N>::fromOperation(Common::Operations::Forward_iround(), x);
+
+
+    SimdArray<int, N> r(x);
+    return r;
+   // return x;
 }
 Vc_FORWARD_UNARY_OPERATOR(sqrt);
 Vc_FORWARD_UNARY_OPERATOR(trunc);

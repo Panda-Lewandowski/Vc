@@ -1,0 +1,10 @@
+--- CMakeLists.txt.user
++++ CMakeLists.txt.user
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE QtCreatorProject>
+-<!-- Written by QtCreator 3.5.1, 2017-10-03T19:31:23. -->
++<!-- Written by QtCreator 3.5.1, 2017-10-04T11:26:26. -->
+ <qtcreator>
+  <data>
+   <variable>EnvironmentId</variable>

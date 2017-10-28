@@ -1,0 +1,36 @@
+# Target labels
+ other
+# Source files and their labels
+/home/parallels/vc/Vc/src/const.cpp
+/home/parallels/vc/Vc/src/cpuid.cpp
+/home/parallels/vc/Vc/src/support_x86.cpp
+/home/parallels/vc/build/trigonometric_SSE2.cpp
+/home/parallels/vc/build/trigonometric_SSE3.cpp
+/home/parallels/vc/build/trigonometric_SSSE3.cpp
+/home/parallels/vc/build/trigonometric_SSE4_1.cpp
+/home/parallels/vc/build/trigonometric_AVX.cpp
+/home/parallels/vc/build/trigonometric_SSE+XOP+FMA4.cpp
+/home/parallels/vc/build/trigonometric_AVX+XOP+FMA4.cpp
+/home/parallels/vc/build/trigonometric_AVX+XOP+FMA.cpp
+/home/parallels/vc/build/trigonometric_AVX+FMA.cpp
+/home/parallels/vc/build/sse_sorthelper_SSE2.cpp
+/home/parallels/vc/build/sse_sorthelper_SSE4_1.cpp
+/home/parallels/vc/build/sse_sorthelper_AVX.cpp
+/home/parallels/vc/build/sse_sorthelper_AVX2+FMA+BMI2.cpp
+/home/parallels/vc/build/avx_sorthelper_AVX.cpp
+/home/parallels/vc/build/avx_sorthelper_AVX2+FMA+BMI2.cpp
+/home/parallels/vc/build/trigonometric_SSE2.cpp.rule
+/home/parallels/vc/build/trigonometric_SSE3.cpp.rule
+/home/parallels/vc/build/trigonometric_SSSE3.cpp.rule
+/home/parallels/vc/build/trigonometric_SSE4_1.cpp.rule
+/home/parallels/vc/build/trigonometric_AVX.cpp.rule
+/home/parallels/vc/build/trigonometric_SSE+XOP+FMA4.cpp.rule
+/home/parallels/vc/build/trigonometric_AVX+XOP+FMA4.cpp.rule
+/home/parallels/vc/build/trigonometric_AVX+XOP+FMA.cpp.rule
+/home/parallels/vc/build/trigonometric_AVX+FMA.cpp.rule
+/home/parallels/vc/build/sse_sorthelper_SSE2.cpp.rule
+/home/parallels/vc/build/sse_sorthelper_SSE4_1.cpp.rule
+/home/parallels/vc/build/sse_sorthelper_AVX.cpp.rule
+/home/parallels/vc/build/sse_sorthelper_AVX2+FMA+BMI2.cpp.rule
+/home/parallels/vc/build/avx_sorthelper_AVX.cpp.rule
+/home/parallels/vc/build/avx_sorthelper_AVX2+FMA+BMI2.cpp.rule

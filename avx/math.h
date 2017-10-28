@@ -79,6 +79,28 @@ Vc_ALWAYS_INLINE Vc_PURE AVX2::Vector<T> round(const AVX2::Vector<T> &x)
     return AVX::VectorHelper<T>::round(x.data());
 }
 
+#ifdef Vc_IMPL_AVX2
+Vc_ALWAYS_INLINE Vc_PURE AVX2::int_v iround(const AVX2::float_v &x)
+{
+    return AVX::VectorHelper<float>::iround(x.data());
+}
+#else
+Vc_ALWAYS_INLINE Vc_PURE SimdArray<int, AVX2::float_v::size()> iround(const AVX2::float_v &x)
+{
+    __m256i value = _mm256_cvtps_epi32(x.data());
+
+    return SimdArray<int, AVX2::float_v::size()>(AVX::int_v(AVX::lo128(value)), AVX::int_v(AVX::hi128(value)));
+
+}
+#endif
+
+Vc_ALWAYS_INLINE Vc_PURE SSE::int_v iround(const AVX2::double_v &x)
+{
+    return AVX::VectorHelper<double>::iround(x.data());
+}
+
+
+
 // abs {{{1
 Vc_INTRINSIC Vc_CONST AVX2::double_v abs(AVX2::double_v x)
 {

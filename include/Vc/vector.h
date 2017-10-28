@@ -276,6 +276,7 @@ namespace std
   using Vc::log10;
   using Vc::log2;
   using Vc::round;
+  using Vc::iround;
   using Vc::sin;
   using Vc::sqrt;
 

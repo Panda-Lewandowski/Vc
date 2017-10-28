@@ -1,0 +1,112 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/parallels/vc/Vc/src/const.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/Vc/src/cpuid.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/Vc/src/support_x86.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE2.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE3.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSSE3.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE4_1.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE+XOP+FMA4.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+XOP+FMA4.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+XOP+FMA.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+FMA.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_SSE2.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_SSE4_1.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_AVX.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_AVX2+FMA+BMI2.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/avx_sorthelper_AVX.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/avx_sorthelper_AVX2+FMA+BMI2.cpp"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE2.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE3.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSSE3.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE4_1.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_SSE+XOP+FMA4.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+XOP+FMA4.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+XOP+FMA.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/trigonometric_AVX+FMA.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_SSE2.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_SSE4_1.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_AVX.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/sse_sorthelper_AVX2+FMA+BMI2.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/avx_sorthelper_AVX.cpp.rule"
+		},
+		{
+			"file" : "/home/parallels/vc/build/avx_sorthelper_AVX2+FMA+BMI2.cpp.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"other"
+		],
+		"name" : "Vc"
+	}
+}

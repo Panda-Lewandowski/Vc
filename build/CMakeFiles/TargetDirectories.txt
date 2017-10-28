@@ -1,0 +1,13 @@
+/home/parallels/vc/build/CMakeFiles/install.dir
+/home/parallels/vc/build/CMakeFiles/rebuild_cache.dir
+/home/parallels/vc/build/CMakeFiles/AVX.dir
+/home/parallels/vc/build/CMakeFiles/Scalar.dir
+/home/parallels/vc/build/CMakeFiles/SSE.dir
+/home/parallels/vc/build/CMakeFiles/other.dir
+/home/parallels/vc/build/CMakeFiles/AVX2.dir
+/home/parallels/vc/build/CMakeFiles/MIC.dir
+/home/parallels/vc/build/CMakeFiles/list_install_components.dir
+/home/parallels/vc/build/CMakeFiles/install/strip.dir
+/home/parallels/vc/build/CMakeFiles/install/local.dir
+/home/parallels/vc/build/CMakeFiles/Vc.dir
+/home/parallels/vc/build/CMakeFiles/edit_cache.dir

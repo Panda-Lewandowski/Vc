@@ -181,6 +181,11 @@ template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<T> round(const Scala
     return x;
 }
 
+template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<int> iround(const Scalar::Vector<T> &x)
+{
+    return Scalar::Vector<int>(std::round(x.data()));
+}
+
 namespace
 {
     template<typename T> bool _realIsEvenHalf(T x) {
@@ -198,6 +203,16 @@ template<> Vc_ALWAYS_INLINE Scalar::Vector<float>  round(const Scalar::Vector<fl
 template<> Vc_ALWAYS_INLINE Scalar::Vector<double> round(const Scalar::Vector<double> &x)
 {
     return Scalar::double_v(std::floor(x.data() + 0.5 ) - (_realIsEvenHalf(x.data()) ? 1.  : 0. ));
+}
+
+template<> Vc_ALWAYS_INLINE Scalar::Vector<int>  iround(const Scalar::Vector<float>  &x)
+{
+    return Scalar::int_v(std::floor(x.data() + 0.5f) - (_realIsEvenHalf(x.data()) ? 1.f : 0.f));
+}
+
+template<> Vc_ALWAYS_INLINE Scalar::Vector<int> iround(const Scalar::Vector<double> &x)
+{
+    return Scalar::int_v(std::floor(x.data() + 0.5 ) - (_realIsEvenHalf(x.data()) ? 1.  : 0. ));
 }
 
 template<typename T> static Vc_ALWAYS_INLINE Scalar::Vector<T> reciprocal(const Scalar::Vector<T> &x)

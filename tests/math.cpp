@@ -45,7 +45,7 @@ using AllTypes = concat<AllVectors, AllSimdArrays>;
 #ifdef isnan
 #undef isnan
 #endif
-
+/*
 // abs {{{1
 TEST_TYPES(V, testAbs, (concat<RealTypes, int_v, short_v, SimdArray<int, 8>,
                                SimdArray<int, 2>, SimdArray<int, 7>>))
@@ -235,7 +235,7 @@ TEST_TYPES(V, testRound, (RealTypes)) //{{{1
         if (i % 8 == 2) {
             reference[i] -= 1.;
         }
-        //std::cout << reference[i] << " ";
+        //std::cout << data[i] << " " << reference[i]  << "//";
     }
     //std::cout << std::endl;
     for (int i = 0; i < Count; ++i) {
@@ -244,8 +244,88 @@ TEST_TYPES(V, testRound, (RealTypes)) //{{{1
         //std::cout << a << ref << std::endl;
         COMPARE(Vc::round(a), ref);
     }
+}*/
+
+template <typename T, long unsigned int N>
+struct GetRoundedType { };
+
+#ifdef Vc_IMPL_AVX2
+template <long unsigned int N>
+struct GetRoundedType<Vc::float_v, N> {
+    typedef typename Vc::int_v type;
+};
+#else
+template <long unsigned int N>
+struct GetRoundedType<Vc::float_v, N> {
+    typedef typename Vc::SimdArray<int, N> type;
+};
+#endif
+
+#if defined Vc_IMPL_SSE || defined Vc_IMPL_AVX
+template <long unsigned int N>
+struct GetRoundedType<Vc::double_v, N> {
+    typedef typename SSE::int_v type;
+};
+#else
+template <long unsigned int N>
+struct GetRoundedType<Vc::double_v, N> {
+    // TODO: how to return SSE-based vector directly?
+    //       Or simdarray will fall-back to it automatically?
+    typedef typename Vc::SimdArray<int, N> type;
+};
+#endif
+
+template <long unsigned int N>
+struct GetRoundedType<Vc::int_v, N> {
+    typedef typename Vc::int_v type;
+};
+
+template <long unsigned int N>
+struct GetRoundedType<Vc::SimdArray<float, N>, N > {
+    typedef typename Vc::SimdArray<int, N> type;
+};
+
+template <long unsigned int N>
+struct GetRoundedType<Vc::SimdArray<double, N>, N > {
+    typedef typename Vc::SimdArray<int, N> type;
+};
+
+
+TEST_TYPES(V, testIRound, (RealTypes)) //{{{1
+{
+    typedef typename V::EntryType T;
+    typedef typename GetRoundedType<V, V::Size>::type R;
+    typedef typename R::EntryType RT;
+    enum {
+        Count = (16 + V::Size) / V::Size
+    };
+    VectorMemoryHelper<V> mem1(Count);
+    VectorMemoryHelper<R> mem2(Count);
+    T *data = mem1;
+    RT *reference = mem2;
+    for (size_t i = 0; i < Count * V::Size; ++i) {
+        data[i] = i * 0.25 - 2.0;
+        reference[i] = int(std::floor(i * 0.25 - 2.0 + 0.5));
+        if (i % 8 == 2) {
+            reference[i] -= 1;
+        }
+        //std::cout << data[i] << " " << reference[i]  << "//";
+    }
+    //std::cout << std::endl;
+    for (int i = 0; i < Count; ++i) {
+        const V a(&data[i * V::Size]);
+        const R ref(&reference[i * V::Size]);
+        std::cout << a << "  " << ref << std::endl;
+
+        auto newValue = Vc::iround(a);
+
+        COMPARE(newValue, ref);
+
+
+    }
 }
 
+/*
 TEST_TYPES(V, testExponent, (RealTypes)) //{{{1
 {
     typedef typename V::EntryType T;
@@ -365,6 +445,6 @@ TEST_TYPES(V, testCopysign, (RealTypes))
     COMPARE(z, V::generate([&](int i) { return std::copysign(x[i], y[i]); }));
 }
 
-//}}}1
+//}}}1*/
 
 // vim: foldmethod=marker

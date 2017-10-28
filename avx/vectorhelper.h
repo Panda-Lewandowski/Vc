@@ -186,6 +186,10 @@ namespace AVX
             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VTArg a) {
                 return _mm256_round_pd(a, _MM_FROUND_NINT);
             }
+
+            static Vc_ALWAYS_INLINE Vc_CONST __m128i iround(VTArg a) {
+                return _mm256_cvtpd_epi32(a);
+            }
         };
 
         template<> struct VectorHelper<float> {
@@ -265,6 +269,10 @@ namespace AVX
             static Vc_ALWAYS_INLINE Vc_CONST VectorType round(VTArg a) {
                 return _mm256_round_ps(a, _MM_FROUND_NINT);
             }
+            static Vc_ALWAYS_INLINE Vc_CONST __m256i iround(VTArg a) {
+                return _mm256_cvtps_epi32(a);
+            }
+
         };
 
 #undef Vc_OP1
